@@ -1,0 +1,147 @@
+﻿Задание 4.1
+База данных содержит список аэропортов практически всех крупных городов России. В большинстве городов есть только один аэропорт. Исключение составляет:
+
+
+SELECT a.city,
+       count(a.airport_name)
+FROM dst_project.airports a
+GROUP BY a.city
+ORDER BY 2 DESC
+
+
+Moscow, Ulyanovsk 
+
+
+________________
+
+
+
+
+Задание 4.2
+Вопрос 1. Таблица рейсов содержит всю информацию о прошлых, текущих и запланированных рейсах. Сколько всего статусов для рейсов определено в таблице?
+
+
+SELECT count(DISTINCT f.status)
+FROM dst_project.flights f
+
+
+6
+
+
+Вопрос 2. Какое количество самолетов находятся в воздухе на момент среза в базе (статус рейса «самолёт уже вылетел и находится в воздухе»).
+
+
+SELECT count(f.status)
+FROM dst_project.flights f
+WHERE f.status = 'Departed'
+
+
+58
+
+
+Вопрос 3. Места определяют схему салона каждой модели. Сколько мест имеет самолет модели 773  (Boeing 777-300)?
+
+
+
+
+
+
+SELECT count(DISTINCT s.seat_no)
+FROM dst_project.seats s
+WHERE s.aircraft_code = '773'
+
+
+402
+
+
+Вопрос 4. Сколько состоявшихся (фактических) рейсов было совершено между 1 апреля 2017 года и 1 сентября 2017 года?
+
+
+SELECT count(f.actual_arrival)
+FROM dst_project.flights f
+WHERE f.status = 'Arrived'
+  AND f.actual_arrival BETWEEN '2017-04-01 00:00:00' AND '2017-09-01 00:00:00'
+
+
+74227
+
+
+
+
+________________
+
+
+
+
+Задание 4.3
+Вопрос 1. Сколько всего рейсов было отменено по данным базы?
+
+
+SELECT count(f.flight_id)
+FROM dst_project.flights f
+WHERE f.status = 'Cancelled'
+
+
+437
+
+
+Вопрос 2. Сколько самолетов моделей типа Boeing, Sukhoi Superjet, Airbus находится в базе авиаперевозок?
+
+
+Boeing: 3
+Sukhoi Superjet: 1
+Airbus: 3
+SELECT 'Boeing' model,
+                count(a.model) counter
+FROM dst_project.aircrafts a
+WHERE a.model ~ 'Boeing'
+UNION ALL
+SELECT 'Sukhoi Superjet' model,
+                         count(a.model)
+FROM dst_project.aircrafts a
+WHERE a.model ~ 'Sukhoi Superjet'
+UNION ALL
+SELECT 'Airbus' model,
+                count(a.model)
+FROM dst_project.aircrafts a
+WHERE a.model ~ 'Airbus'
+
+
+Вопрос 3. В какой части (частях) света находится больше аэропортов?
+Europe: 52
+Asia: 52
+Australia: 0
+SELECT 'Europe' part_of_the_world,
+                count(a.airport_name) counter
+FROM dst_project.airports a
+WHERE a.timezone ~ 'Europe'
+UNION ALL
+SELECT 'Asia' part_of_the_world,
+              count(a.airport_name) counter
+FROM dst_project.airports a
+WHERE a.timezone ~ 'Asia'
+UNION ALL
+SELECT 'Australia' part_of_the_world,
+                   count(a.airport_name) counter
+FROM dst_project.airports a
+WHERE a.timezone ~ 'Australia'
+
+
+
+
+Вопрос 4. У какого рейса была самая большая задержка прибытия за все время сбора данных? Введите id рейса.
+
+
+
+
+SELECT (f.scheduled_arrival - f.actual_arrival) delay,
+       f.flight_id
+FROM dst_project.flights_v f
+ORDER BY 1
+LIMIT 1
+
+
+flight_id = 157571
+
+
+________________
