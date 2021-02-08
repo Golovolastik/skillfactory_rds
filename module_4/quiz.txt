@@ -145,3 +145,105 @@ flight_id = 157571
 
 
 ________________
+
+
+
+
+Задание 4.4
+Вопрос 1. Когда был запланирован самый первый вылет, сохраненный в базе данных?
+
+
+SELECT min(f.scheduled_departure)
+FROM dst_project.flights f
+
+
+14.08.2016
+
+
+Вопрос 2. Сколько минут составляет запланированное время полета в самом длительном рейсе?
+
+
+SELECT EXTRACT(HOUR
+               FROM a.t)*60+EXTRACT(minutes
+                                    FROM a.t)+EXTRACT(seconds
+                                                      FROM a.t)/60
+FROM
+  (SELECT max(f.scheduled_arrival - f.scheduled_departure) t
+   FROM dst_project.flights f) a
+
+
+530
+
+
+Вопрос 3. Между какими аэропортами пролегает самый длительный по времени запланированный рейс?
+
+
+SELECT f.departure_airport,
+       f.arrival_airport
+FROM dst_project.flights f
+WHERE (f.scheduled_arrival - f.scheduled_departure) =
+    (SELECT a.time_in_air
+     FROM
+       (SELECT max(f1.scheduled_arrival - f1.scheduled_departure) time_in_air
+        FROM dst_project.flights f1) a)
+LIMIT 1
+
+
+DME - UUS
+
+
+Вопрос 4. Сколько составляет средняя дальность полета среди всех самолетов в минутах? Секунды округляются в меньшую сторону (отбрасываются до минут).
+
+
+SELECT extract(HOUR
+               FROM a.time_in_air) * 60 + extract(minutes
+                                                  FROM a.time_in_air)
+FROM
+  (SELECT avg(f.scheduled_arrival - f.scheduled_departure) time_in_air
+   FROM dst_project.flights f) a
+
+
+128
+
+
+
+
+________________
+
+
+
+
+Задание 4.5
+Вопрос 1. Мест какого класса у SU9 больше всего?
+
+
+SELECT s.fare_conditions,
+       count(s.seat_no)
+FROM dst_project.aircrafts a
+JOIN dst_project.seats s ON a.aircraft_code = s.aircraft_code
+WHERE a.aircraft_code = 'SU9'
+GROUP BY s.fare_conditions
+ 
+Economy
+
+
+Вопрос 2. Какую самую минимальную стоимость составило бронирование за всю историю?
+
+
+SELECT min(total_amount)
+FROM dst_project.bookings
+
+
+3400
+
+
+Вопрос 3. Какой номер места был у пассажира с id = 4313 788533?
+
+
+SELECT bp.seat_no
+FROM dst_project.tickets t
+JOIN dst_project.boarding_passes bp ON t.ticket_no = bp.ticket_no
+WHERE t.passenger_id = '4313 788533'
+
+
+2A
