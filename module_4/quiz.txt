@@ -247,3 +247,81 @@ WHERE t.passenger_id = '4313 788533'
 
 
 2A
+
+
+________________
+
+
+
+
+Задание 5.1
+Вопрос 1. Анапа — курортный город на юге России. Сколько рейсов прибыло в Анапу за 2017 год?
+
+
+SELECT count(f.flight_id)
+FROM dst_project.flights_v f
+WHERE f.arrival_city = 'Анапа'
+  AND f.status = 'Arrived'
+  AND extract(YEAR
+              FROM f.actual_arrival) = '2017'
+
+
+486
+
+
+Вопрос 2. Сколько рейсов из Анапы вылетело зимой 2017 года?
+
+
+FROM dst_project.flights_v f
+WHERE f.departure_city = 'Анапа'
+  AND f.status = 'Arrived'
+  AND (date_part('year', actual_departure) = 2017)
+  AND (date_part('month', actual_departure) in (12,
+                                                1,
+                                                2))
+
+
+127
+
+
+Вопрос 3. Посчитайте количество отмененных рейсов из Анапы за все время.
+
+
+SELECT count(f.flight_id)
+FROM dst_project.flights_v f
+WHERE f.departure_city = 'Анапа'
+  AND f.status = 'Cancelled'
+
+
+1
+
+
+Вопрос 4. Сколько рейсов из Анапы не летают в Москву?
+
+
+SELECT count(f.flight_no) flight_num
+FROM dst_project.flights_v f
+WHERE f.departure_city = 'Анапа'
+  AND f.arrival_city <> 'Москва'
+
+
+453
+
+
+Вопрос 5. Какая модель самолета летящего на рейсах из Анапы имеет больше всего мест?
+
+
+SELECT a.model,
+       count(s.seat_no)
+FROM dst_project.aircrafts a
+LEFT JOIN dst_project.seats s ON s.aircraft_code = a.aircraft_code
+WHERE a.aircraft_code in
+    (SELECT f.aircraft_code
+     FROM dst_project.flights_v f
+     WHERE f.departure_city = 'Анапа' )
+GROUP BY a.model
+ORDER BY 2 DESC
+LIMIT 1
+
+
+Boeing 737-300
