@@ -1,4 +1,3 @@
-# Base of query
 SELECT 
     f.flight_id, 
     f.flight_no, 
@@ -8,6 +7,7 @@ SELECT
     f.arrival_airport_name, 
     f.arrival_city, 
     t1.passengers,
+    t2.max_passengers,
     t1.total_amount
 FROM dst_project.flights_v f
 LEFT JOIN dst_project.aircrafts a on a.aircraft_code = f.aircraft_code
@@ -19,19 +19,13 @@ LEFT JOIN
         left join dst_project.boarding_passes bp on bp.ticket_no = t.ticket_no
         group by bp.flight_id
         ) t1 on t1.flight_id = f.flight_id
+LEFT JOIN
+        (
+        select s.aircraft_code, a.model, count(s.seat_no) max_passengers
+        from dst_project.seats s
+        left join dst_project.aircrafts a on a.aircraft_code = s.aircraft_code
+        group by s.aircraft_code, a.model
+        ) t2 on t2.aircraft_code = f.aircraft_code
 WHERE f.departure_airport = 'AAQ'
   AND (date_trunc('month', f.scheduled_departure) in ('2017-01-01','2017-02-01', '2017-12-01'))
   AND f.status not in ('Cancelled')
- 
-# Tickets
-select t.book_ref, t.ticket_no, t.passenger_id, bp.seat_no, b.total_amount
-from dst_project.tickets t
-left join dst_project.bookings b on t.book_ref = b.book_ref
-left join dst_project.boarding_passes bp on bp.ticket_no = t.ticket_no
-
-# Amount of tickets and sum per flight
-select /*t.book_ref,*/ bp.flight_id, /*t.ticket_no, t.passenger_id,*/ count(bp.seat_no), sum(b.total_amount)
-from dst_project.tickets t
-left join dst_project.bookings b on t.book_ref = b.book_ref
-left join dst_project.boarding_passes bp on bp.ticket_no = t.ticket_no
-group by bp.flight_id
