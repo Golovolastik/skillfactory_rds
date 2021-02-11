@@ -1,8 +1,8 @@
 SELECT f.flight_id, -- ID рейса
- a.model, -- Модель самолета
  f.departure_city, -- Город отправления
  f.arrival_airport_name, -- Аэропорт прибытия
  f.arrival_city, -- Город прибытия
+ a.model, -- Модель самолета
  t1.passengers, -- Количество пассажиров на рейсе
  t2.max_passengers, -- Максималтное количество пассажиров
  t1.total_amount -- Сумма проданных билетов
