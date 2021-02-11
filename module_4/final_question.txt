@@ -1,0 +1,13 @@
+# Base of query
+SELECT f.flight_id, f.flight_no, f.aircraft_code, a.model, f.departure_city, f.arrival_airport_name, f.arrival_city
+FROM dst_project.flights_v f
+LEFT JOIN dst_project.aircrafts a on a.aircraft_code = f.aircraft_code 
+WHERE f.departure_airport = 'AAQ'
+  AND (date_trunc('month', f.scheduled_departure) in ('2017-01-01','2017-02-01', '2017-12-01'))
+  AND f.status not in ('Cancelled')
+ 
+# Tickets
+select t.book_ref, t.ticket_no, t.passenger_id, bp.seat_no, b.total_amount
+from dst_project.tickets t
+left join dst_project.bookings b on t.book_ref = b.book_ref
+left join dst_project.boarding_passes bp on bp.ticket_no = t.ticket_no
