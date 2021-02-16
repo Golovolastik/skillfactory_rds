@@ -15,8 +15,6 @@ Moscow, Ulyanovsk
 ________________
 
 
-
-
 Задание 4.2
 Вопрос 1. Таблица рейсов содержит всю информацию о прошлых, текущих и запланированных рейсах. Сколько всего статусов для рейсов определено в таблице?
 
@@ -42,10 +40,6 @@ WHERE f.status = 'Departed'
 Вопрос 3. Места определяют схему салона каждой модели. Сколько мест имеет самолет модели 773  (Boeing 777-300)?
 
 
-
-
-
-
 SELECT count(DISTINCT s.seat_no)
 FROM dst_project.seats s
 WHERE s.aircraft_code = '773'
@@ -66,11 +60,7 @@ WHERE f.status = 'Arrived'
 74227
 
 
-
-
 ________________
-
-
 
 
 Задание 4.3
@@ -91,6 +81,8 @@ WHERE f.status = 'Cancelled'
 Boeing: 3
 Sukhoi Superjet: 1
 Airbus: 3
+
+
 SELECT 'Boeing' model,
                 count(a.model) counter
 FROM dst_project.aircrafts a
@@ -108,9 +100,13 @@ WHERE a.model ~ 'Airbus'
 
 
 Вопрос 3. В какой части (частях) света находится больше аэропортов?
+
+
 Europe: 52
 Asia: 52
 Australia: 0
+
+
 SELECT 'Europe' part_of_the_world,
                 count(a.airport_name) counter
 FROM dst_project.airports a
@@ -127,11 +123,7 @@ FROM dst_project.airports a
 WHERE a.timezone ~ 'Australia'
 
 
-
-
 Вопрос 4. У какого рейса была самая большая задержка прибытия за все время сбора данных? Введите id рейса.
-
-
 
 
 SELECT (f.scheduled_arrival - f.actual_arrival) delay,
@@ -145,8 +137,6 @@ flight_id = 157571
 
 
 ________________
-
-
 
 
 Задание 4.4
@@ -206,11 +196,7 @@ FROM
 128
 
 
-
-
 ________________
-
-
 
 
 Задание 4.5
@@ -223,6 +209,7 @@ FROM dst_project.aircrafts a
 JOIN dst_project.seats s ON a.aircraft_code = s.aircraft_code
 WHERE a.aircraft_code = 'SU9'
 GROUP BY s.fare_conditions
+
  
 Economy
 
@@ -250,8 +237,6 @@ WHERE t.passenger_id = '4313 788533'
 
 
 ________________
-
-
 
 
 Задание 5.1
