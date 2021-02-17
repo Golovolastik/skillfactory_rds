@@ -1,8 +1,13 @@
 SELECT f.flight_id, -- ID рейса
+ f.scheduled_departure, -- Дата и время отправления
+ f.scheduled_departure, -- Фактическое время вылета
+ f.scheduled_duration, -- Установленное время полета
+ f.actual_duration, -- Фактическое время полета
  f.departure_city, -- Город отправления
  f.arrival_airport_name, -- Аэропорт прибытия
  f.arrival_city, -- Город прибытия
  a.model, -- Модель самолета
+ a.range, -- Дальность полета самолета
  t1.passengers, -- Количество пассажиров на рейсе
  t2.max_passengers, -- Максималтное количество пассажиров
  t1.total_amount -- Сумма проданных билетов
