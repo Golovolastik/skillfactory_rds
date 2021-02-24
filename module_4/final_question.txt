@@ -1,8 +1,6 @@
 SELECT f.flight_id, -- ID рейса
  f.scheduled_departure, -- Дата и время отправления
- f.actual_departure, -- Фактическое время вылета
  f.scheduled_duration, -- Установленное время полета
- f.actual_duration, -- Фактическое время полета
  f.departure_city, -- Город отправления
  f.arrival_airport_name, -- Аэропорт прибытия
  f.arrival_city, -- Город прибытия
