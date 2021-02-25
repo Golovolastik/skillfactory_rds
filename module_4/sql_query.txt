@@ -1,0 +1,18 @@
+SELECT f.flight_id, f.scheduled_departure, f.scheduled_arrival, f.scheduled_duration, 
+        f.departure_city, f.departure_airport_name, f.arrival_city, f.arrival_airport_name,
+        a.model, a.range, a1.seats, a2.profit, a2. passengers
+FROM dst_project.flights_v f
+left join dst_project.aircrafts a on f.aircraft_code = a.aircraft_code
+left join (
+            select s.aircraft_code, count(s.seat_no) seats
+            from dst_project.seats s
+            group by s.aircraft_code
+            ) a1 on a1.aircraft_code = f.aircraft_code
+left join (
+            select tf.flight_id, sum(tf.amount) profit, count(tf.ticket_no) passengers
+            from dst_project.ticket_flights tf
+            group by tf.flight_id
+            ) a2 on f.flight_id = a2.flight_id
+WHERE f.departure_airport = 'AAQ'
+  AND (date_trunc('month', f.scheduled_departure) in ('2017-01-01','2017-02-01', '2017-12-01'))
+  AND f.status not in ('Cancelled')
