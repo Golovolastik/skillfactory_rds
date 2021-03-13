@@ -1,31 +1,50 @@
 SELECT f.flight_id, -- ID рейса
-       f.scheduled_departure, -- Время отправления
-       f.scheduled_arrival, -- Время прибытия
-       f.scheduled_duration, -- Длительность полета
-       f.departure_city, -- Город отправления
-       f.departure_airport_name, -- Аэропорт отправления
-       f.arrival_city, -- Город прибытия
-       f.arrival_airport_name, -- Аэропорт прибытия
-       a.model, -- Модель самолета
-       a.range, -- Дальность полета самолета
-       a1.seats, -- Количество пассажирских мест
-       a2.profit, -- Сумма проданных билетов на рейс
-       a2. passengers -- Количество пассажиров
+ f.scheduled_departure, -- Время отправления
+ f.scheduled_arrival, -- Время прибытия
+ f.scheduled_duration, -- Длительность полета
+ f.departure_city, -- Город отправления
+ f.departure_airport_name, -- Аэропорт отправления
+ f.arrival_city, -- Город прибытия
+ f.arrival_airport_name, -- Аэропорт прибытия
+ a.model, -- Модель самолета
+ a.range, -- Дальность полета самолета
+ a1.seats, -- Количество пассажирских мест
+ a4.business_seats, -- Количество мест в бизнес-классе
+ a2. passengers, -- Количество пассажиров
+ a3.business_passengers, -- Количество пассажиров в бизнес-классе
+ a2.profit -- Сумма вырученная от продажи билетов
 FROM dst_project.flights_v f
-LEFT JOIN -- Информация о технических характеристиках самолетов 
-	dst_project.aircrafts a ON f.aircraft_code = a.aircraft_code
+LEFT JOIN -- Информация о технических характеристиках самолетов
+ dst_project.aircrafts a ON f.aircraft_code = a.aircraft_code
 LEFT JOIN -- Получаем информацию о количестве мест
+
   (SELECT s.aircraft_code,
           count(s.seat_no) seats
    FROM dst_project.seats s
    GROUP BY s.aircraft_code) a1 ON a1.aircraft_code = f.aircraft_code
 LEFT JOIN -- Получаем информацию о проданных билетах
+
   (SELECT tf.flight_id,
           sum(tf.amount) profit,
           count(tf.ticket_no) passengers
    FROM dst_project.ticket_flights tf
    GROUP BY tf.flight_id) a2 ON f.flight_id = a2.flight_id
+LEFT JOIN -- Определим количество пассажиров в бизнес-классе
+
+  (SELECT tf1.flight_id,
+          count(tf1.fare_conditions) business_passengers
+   FROM dst_project.ticket_flights tf1
+   WHERE tf1.fare_conditions = 'Business'
+   GROUP BY tf1.flight_id) a3 ON f.flight_id = a3.flight_id
+LEFT JOIN -- Определим количество мест в бизнес-классе
+
+  (SELECT s1.aircraft_code,
+          count(s1.fare_conditions) business_seats
+   FROM dst_project.seats s1
+   WHERE s1.fare_conditions = 'Business'
+   GROUP BY s1.aircraft_code) a4 ON f.aircraft_code = a4.aircraft_code
 WHERE f.departure_airport = 'AAQ' -- Фильтруем рейсы по нужному критерию
+
   AND (date_trunc('month', f.scheduled_departure) in ('2017-01-01',
                                                       '2017-02-01',
                                                       '2017-12-01'))
